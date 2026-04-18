@@ -5,6 +5,7 @@ import {
   MoreHorizontal, 
   MessageSquare, 
   Users, 
+  UserPlus,
   Compass, 
   Bot, 
   Zap, 
@@ -52,17 +53,27 @@ const MOCK_CHATS: Chat[] = [
 export default function ChatPage() {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(MOCK_CHATS[1].id);
   const [activeTab, setActiveTab] = useState<'全部' | '真人' | 'AI助手' | '智能体' | '群组'>('全部');
+  const [searchQuery, setSearchQuery] = useState('');
   const [isMobileView, setIsMobileView] = useState(false);
   const [showMobileList, setShowMobileList] = useState(true);
   const [messageText, setMessageText] = useState('');
+  const [showPlusMenu, setShowPlusMenu] = useState(false);
 
   const filteredChats = MOCK_CHATS.filter(chat => {
-    if (activeTab === '全部') return true;
-    if (activeTab === '真人') return chat.type === 'person';
-    if (activeTab === 'AI助手') return chat.type === 'ai';
-    if (activeTab === '智能体') return chat.type === 'agent';
-    if (activeTab === '群组') return chat.type === 'group';
-    return true;
+    // Tab filter
+    const matchesTab = 
+      activeTab === '全部' ||
+      (activeTab === '真人' && chat.type === 'person') ||
+      (activeTab === 'AI助手' && chat.type === 'ai') ||
+      (activeTab === '智能体' && chat.type === 'agent') ||
+      (activeTab === '群组' && chat.type === 'group');
+    
+    // Search filter
+    const matchesSearch = 
+      chat.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      chat.lastMessage.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesTab && matchesSearch;
   });
 
   const selectedChat = MOCK_CHATS.find(c => c.id === selectedChatId);
@@ -91,19 +102,47 @@ export default function ChatPage() {
           bg-white border-r border-border-base flex flex-col transition-all duration-300 z-20
         `}>
           {/* Header */}
-          <div className="p-4 border-b border-border-base">
+          <div className="p-4 border-b border-border-base relative">
             <div className="flex items-center justify-between mb-4">
               <h1 className="text-xl font-black text-text-main tracking-tight">消息</h1>
-              <button className="p-2 bg-surface text-primary rounded-lg hover:bg-primary/5 transition-colors">
-                <Plus size={20} />
+              <button 
+                onClick={() => setShowPlusMenu(!showPlusMenu)}
+                className={`p-2 rounded-lg transition-all ${showPlusMenu ? 'bg-primary text-white shadow-lg' : 'bg-surface text-primary hover:bg-primary/5'}`}
+              >
+                <Plus size={20} className={`transition-transform duration-300 ${showPlusMenu ? 'rotate-45' : ''}`} />
               </button>
             </div>
+
+            <AnimatePresence>
+              {showPlusMenu && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-30" 
+                    onClick={() => setShowPlusMenu(false)}
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    className="absolute right-4 top-16 w-48 bg-white border border-border-base rounded-2xl shadow-xl z-40 p-2 overflow-hidden"
+                  >
+                    <PlusMenuItem icon={MessageCircle} label="发起私聊" onClick={() => setShowPlusMenu(false)} />
+                    <PlusMenuItem icon={Users} label="创建群聊" onClick={() => setShowPlusMenu(false)} />
+                    <PlusMenuItem icon={UserPlus} label="添加好友" onClick={() => setShowPlusMenu(false)} />
+                    <div className="h-px bg-border-base my-1 mx-2" />
+                    <PlusMenuItem icon={Search} label="搜索联系人" onClick={() => setShowPlusMenu(false)} />
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
             
             <div className="relative mb-4">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" size={16} />
               <input 
                 type="text" 
                 placeholder="搜索联系人、消息..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-surface border border-border-base rounded-xl py-2 pl-10 pr-4 text-xs focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               />
             </div>
@@ -319,6 +358,20 @@ export default function ChatPage() {
 }
 
 // Sub-components
+function PlusMenuItem({ icon: Icon, label, onClick }: { icon: any, label: string, onClick: () => void }) {
+  return (
+    <button 
+      onClick={onClick}
+      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-text-main hover:bg-surface transition-colors text-left group"
+    >
+      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-text-muted group-hover:bg-primary group-hover:text-white transition-all">
+        <Icon size={16} />
+      </div>
+      {label}
+    </button>
+  );
+}
+
 function HeaderAction({ icon: Icon }: { icon: any }) {
   return (
     <button className="p-2 text-gray-500 hover:bg-gray-50 rounded-lg transition-colors">

@@ -23,7 +23,7 @@ import {
   ShieldAlert,
   CheckCircle2,
   Circle,
-  BrainCircuit,
+  Sparkles,
   Workflow,
   Wand2,
   Command,
@@ -112,7 +112,14 @@ export default function IntelligenceHub() {
           <div className="flex items-center gap-6">
             <div>
               <h1 className="text-xl font-black text-text-main tracking-tighter flex items-center gap-2">
-                <BrainCircuit className="text-primary" size={24} />
+                <div className="relative">
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+                    transition={{ repeat: Infinity, duration: 4 }}
+                    className="absolute inset-0 blur-lg bg-primary/20 -z-10"
+                  />
+                  <Sparkles className="text-primary" size={24} />
+                </div>
                 智能中心
               </h1>
               <p className="text-[10px] text-text-muted font-black uppercase tracking-[0.2em] mt-0.5">Intelligence Hub</p>

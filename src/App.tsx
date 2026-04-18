@@ -4,7 +4,7 @@ import {
   MessageSquare, 
   Users, 
   Compass, 
-  Cpu, 
+  Sparkles, 
   Settings,
   Bell,
   LogOut,
@@ -81,8 +81,8 @@ export default function App() {
           <div className="flex flex-col gap-6 flex-1">
             <SidebarNavItem icon={MessageCircle} active={currentView === 'chat'} onClick={() => setCurrentView('chat')} />
             <SidebarNavItem icon={Users} active={currentView === 'contacts'} onClick={() => setCurrentView('contacts')} />
+            <SidebarNavItem icon={Sparkles} active={currentView === 'ai'} onClick={() => setCurrentView('ai')} />
             <SidebarNavItem icon={Orbit} active={currentView === 'discovery'} onClick={() => setCurrentView('discovery')} />
-            <SidebarNavItem icon={Cpu} active={currentView === 'ai'} onClick={() => setCurrentView('ai')} />
           </div>
 
           <div className="mt-auto flex flex-col gap-6">
@@ -117,8 +117,8 @@ export default function App() {
           <div className="h-16 bg-white border-t border-border-base flex items-center justify-around flex-shrink-0 z-50 px-2 overflow-x-auto no-scrollbar">
             <MobileTab icon={MessageCircle} label="消息" active={currentView === 'chat'} onClick={() => setCurrentView('chat')} />
             <MobileTab icon={Users} label="联系人" active={currentView === 'contacts'} onClick={() => setCurrentView('contacts')} />
+            <MobileTab icon={Sparkles} label="智能" active={currentView === 'ai'} onClick={() => setCurrentView('ai')} />
             <MobileTab icon={Orbit} label="社交圈" active={currentView === 'discovery'} onClick={() => setCurrentView('discovery')} />
-            <MobileTab icon={Cpu} label="智能" active={currentView === 'ai'} onClick={() => setCurrentView('ai')} />
             <MobileTab icon={User} label="我的" active={currentView === 'settings' || currentView === 'profile'} onClick={() => setCurrentView('settings')} />
           </div>
         )}
