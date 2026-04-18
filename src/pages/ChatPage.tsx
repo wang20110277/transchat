@@ -51,10 +51,19 @@ const MOCK_CHATS: Chat[] = [
 
 export default function ChatPage() {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(MOCK_CHATS[1].id);
-  const [activeTab, setActiveTab] = useState<'all' | 'person' | 'ai' | 'agent' | 'group'>('all');
+  const [activeTab, setActiveTab] = useState<'全部' | '真人' | 'AI助手' | '智能体' | '群组'>('全部');
   const [isMobileView, setIsMobileView] = useState(false);
   const [showMobileList, setShowMobileList] = useState(true);
   const [messageText, setMessageText] = useState('');
+
+  const filteredChats = MOCK_CHATS.filter(chat => {
+    if (activeTab === '全部') return true;
+    if (activeTab === '真人') return chat.type === 'person';
+    if (activeTab === 'AI助手') return chat.type === 'ai';
+    if (activeTab === '智能体') return chat.type === 'agent';
+    if (activeTab === '群组') return chat.type === 'group';
+    return true;
+  });
 
   const selectedChat = MOCK_CHATS.find(c => c.id === selectedChatId);
 
@@ -100,10 +109,11 @@ export default function ChatPage() {
             </div>
 
             <div className="flex gap-2 overflow-x-auto no-scrollbar scroll-smooth">
-              {['全部', '真人', 'AI助手', '智能体', '群组'].map((t, idx) => (
+              {['全部', '真人', 'AI助手', '智能体', '群组'].map((t) => (
                 <button 
                   key={t}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${idx === 0 ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                  onClick={() => setActiveTab(t as any)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${activeTab === t ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
                 >
                   {t}
                 </button>
@@ -113,7 +123,7 @@ export default function ChatPage() {
 
           {/* List */}
           <div className="flex-1 overflow-y-auto no-scrollbar py-2">
-            {MOCK_CHATS.map((chat) => (
+            {filteredChats.map((chat) => (
               <div 
                 key={chat.id}
                 onClick={() => handleSelectChat(chat.id)}
