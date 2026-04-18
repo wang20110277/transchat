@@ -82,8 +82,7 @@ export default function App() {
             <SidebarNavItem icon={MessageCircle} active={currentView === 'chat'} onClick={() => setCurrentView('chat')} />
             <SidebarNavItem icon={Users} active={currentView === 'contacts'} onClick={() => setCurrentView('contacts')} />
             <SidebarNavItem icon={Orbit} active={currentView === 'discovery'} onClick={() => setCurrentView('discovery')} />
-            <div className="w-full border-t border-border-base my-2" />
-            <SidebarNavItem icon={Cpu} active={currentView === 'ai'} onClick={() => setCurrentView('ai')} color="text-accent" />
+            <SidebarNavItem icon={Cpu} active={currentView === 'ai'} onClick={() => setCurrentView('ai')} />
           </div>
 
           <div className="mt-auto flex flex-col gap-6">
