@@ -51,7 +51,7 @@ export default function AuthPage({ onLoginSuccess }: { onLoginSuccess: () => voi
             <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-2xl">
               <MessageCircle className="w-7 h-7 text-primary" strokeWidth={3} />
             </div>
-            <h1 className="text-3xl font-black tracking-tighter">TransChat</h1>
+            <h1 className="text-3xl font-black tracking-tighter">传书</h1>
           </motion.div>
           
           <motion.h2 
@@ -101,7 +101,7 @@ export default function AuthPage({ onLoginSuccess }: { onLoginSuccess: () => voi
               <div className="w-11 h-11 ai-gradient-bg rounded-xl flex items-center justify-center shadow-xl">
                 <MessageCircle className="text-white w-6 h-6" strokeWidth={3} />
               </div>
-              <span className="text-2xl font-black ai-gradient-text tracking-tighter">TransChat</span>
+              <span className="text-2xl font-black ai-gradient-text tracking-tighter">传书</span>
             </div>
           </div>
 
@@ -110,7 +110,7 @@ export default function AuthPage({ onLoginSuccess }: { onLoginSuccess: () => voi
               {mode === 'login' ? '欢迎回来' : '创建账号'}
             </h3>
             <p className="text-text-muted font-medium text-sm">
-              {mode === 'login' ? '选择登录方式继续探索' : '加入 TransChat，开启智能通讯'}
+              {mode === 'login' ? '选择登录方式继续探索' : '加入传书，开启智能通讯'}
             </p>
           </div>
 
@@ -175,7 +175,7 @@ export default function AuthPage({ onLoginSuccess }: { onLoginSuccess: () => voi
                   </div>
                 </div>
                 <p className="mt-6 text-sm text-gray-400 text-center">
-                  使用 <span className="text-gray-700 font-medium">TransChat 移动端</span> 扫码
+                  使用 <span className="text-gray-700 font-medium">传书 移动端</span> 扫码
                 </p>
               </motion.div>
             ) : (
