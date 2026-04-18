@@ -58,6 +58,8 @@ export default function ChatPage() {
   const [showMobileList, setShowMobileList] = useState(true);
   const [messageText, setMessageText] = useState('');
   const [showPlusMenu, setShowPlusMenu] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(320); // Default width 320px
+  const isResizing = useRef(false);
 
   const filteredChats = MOCK_CHATS.filter(chat => {
     // Tab filter
@@ -75,6 +77,35 @@ export default function ChatPage() {
 
     return matchesTab && matchesSearch;
   });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing.current) return;
+      const newWidth = e.clientX - (isMobileView ? 0 : 64); // 64 is sidebar width
+      if (newWidth >= 240 && newWidth <= 480) {
+        setSidebarWidth(newWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      isResizing.current = false;
+      document.body.style.cursor = 'default';
+      document.body.style.userSelect = 'auto';
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isMobileView]);
+
+  const startResizing = () => {
+    isResizing.current = true;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
 
   const selectedChat = MOCK_CHATS.find(c => c.id === selectedChatId);
 
@@ -97,10 +128,13 @@ export default function ChatPage() {
   return (
     <div className="flex-1 flex overflow-hidden relative bg-surface">
       {/* Chat List Panel */}
-        <div className={`
-          ${isMobileView ? (showMobileList ? 'w-full' : 'absolute -left-full') : 'w-80'}
-          bg-white border-r border-border-base flex flex-col transition-all duration-300 z-20
-        `}>
+        <div 
+          style={{ width: isMobileView ? (showMobileList ? '100%' : '0') : `${sidebarWidth}px` }}
+          className={`
+            ${isMobileView ? (showMobileList ? 'w-full' : 'absolute -left-full') : ''}
+            bg-white border-r border-border-base flex flex-col transition-[width] duration-300 z-20 overflow-hidden relative
+          `}
+        >
           {/* Header */}
           <div className="p-4 border-b border-border-base relative">
             <div className="flex items-center justify-between mb-4">
@@ -208,6 +242,16 @@ export default function ChatPage() {
             ))}
           </div>
         </div>
+
+        {/* Resizer Handle */}
+        {!isMobileView && (
+          <div
+            onMouseDown={startResizing}
+            className="w-1 hover:w-1.5 transition-all bg-transparent hover:bg-primary/30 cursor-col-resize z-30 group"
+          >
+            <div className="h-full w-px bg-border-base group-hover:bg-primary/50 mx-auto" />
+          </div>
+        )}
 
         {/* Chat Detail Panel */}
         <div className={`
