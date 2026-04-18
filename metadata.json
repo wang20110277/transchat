@@ -1,0 +1,9 @@
+{
+  "name": "TransChat",
+  "description": "Next-generation IM with AI Agents, Knowledge Bases, and Smart Glasses integration.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": []
+}

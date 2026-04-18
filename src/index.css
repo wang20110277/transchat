@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  
+  --color-primary: #1a73e8;
+  --color-accent: #7c3aed;
+  --color-surface: #f8fafc;
+  --color-text-main: #0f172a;
+  --color-text-muted: #64748b;
+  --color-border-base: #e2e8f0;
+  
+  --radius-button: 12px;
+  --radius-card: 16px;
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased bg-surface text-text-main;
+  }
+}
+
+.gradient-editorial {
+  background: linear-gradient(135deg, #1a73e8 0%, #7c3aed 100%);
+}
+
+.gradient-editorial-text {
+  background: linear-gradient(135deg, #1a73e8 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ai-gradient-bg {
+  background: linear-gradient(135deg, #1a73e8 0%, #7c3aed 100%);
+}
+
+.ai-gradient-text {
+  background: linear-gradient(135deg, #1a73e8 0%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full hover:bg-gray-400 transition-colors;
+}
