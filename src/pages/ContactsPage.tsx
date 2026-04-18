@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { 
   Search, 
   UserPlus, 
+  Users,
   Hash, 
   MapPin, 
   ChevronRight, 
@@ -62,7 +63,7 @@ export default function ContactsPage() {
           <div className="grid grid-cols-4 gap-3 mb-6">
             {[
               { icon: UserPlus, label: '新的申请', count: 3, color: 'bg-primary' },
-              { icon: Hash, label: '我的群组', count: 12, color: 'bg-accent' },
+              { icon: Users, label: '我的群组', count: 12, color: 'bg-accent' },
               { icon: Star, label: '常用联系人', count: 5, color: 'bg-yellow-400' },
               { icon: MapPin, label: '附近的人', count: 8, color: 'bg-green-500' },
             ].map((item, i) => (

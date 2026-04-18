@@ -61,7 +61,10 @@ interface AIBot {
   model: string;
   knowledgeBases: number;
   status: 'online' | 'offline';
-  category: string;
+  category: '我的助手' | '推荐助手';
+  isPrivate: boolean;
+  isContributed?: boolean;
+  isSubscribed?: boolean;
 }
 
 interface Agent {
@@ -76,9 +79,10 @@ interface Agent {
 
 // --- Mock Data ---
 const MOCK_BOTS: AIBot[] = [
-  { id: 'b1', name: '法律顾问 - 律小能', avatar: 'https://picsum.photos/seed/b1/100', description: '专精于合同法与民事纠纷，为您提供专业的法律意见。', model: 'Gemini-1.5-Pro', knowledgeBases: 12, status: 'online', category: '预设角色' },
-  { id: 'b2', name: '极速翻译官', avatar: 'https://picsum.photos/seed/b2/100', description: '支持 50+ 语言实时互译，精准捕捉行文语气。', model: 'GPT-4o', knowledgeBases: 0, status: 'online', category: '我的助手' },
-  { id: 'b3', name: '代码评审专家', avatar: 'https://picsum.photos/seed/b3/100', description: '深度理解 Git 差异，为您提供重构与优化建议。', model: 'Claude-3.5-Sonnet', knowledgeBases: 5, status: 'offline', category: '推荐' },
+  { id: 'b1', name: '法律顾问 - 律小能', avatar: 'https://picsum.photos/seed/b1/100', description: '专精于合同法与民事纠纷，为您提供专业的法律意见。', model: 'Gemini-1.5-Pro', knowledgeBases: 12, status: 'online', category: '推荐助手', isPrivate: false, isSubscribed: true },
+  { id: 'b2', name: '极速翻译官', avatar: 'https://picsum.photos/seed/b2/100', description: '支持 50+ 语言实时互译，精准捕捉行文语气。', model: 'GPT-4o', knowledgeBases: 0, status: 'online', category: '我的助手', isPrivate: true, isContributed: false },
+  { id: 'b3', name: '代码评审专家', avatar: 'https://picsum.photos/seed/b3/100', description: '深度理解 Git 差异，为您提供重构与优化建议。', model: 'Claude-3.5-Sonnet', knowledgeBases: 5, status: 'offline', category: '推荐助手', isPrivate: false, isSubscribed: false },
+  { id: 'b4', name: '资产配置官', avatar: 'https://picsum.photos/seed/b4/100', description: '基于现代组合理论，为您定制家庭资产配置方案。', model: 'Gemini-1.5-Flash', knowledgeBases: 2, status: 'online', category: '我的助手', isPrivate: true, isContributed: true },
 ];
 
 const MOCK_AGENTS: Agent[] = [
@@ -221,6 +225,18 @@ export default function IntelligenceHub() {
                       placeholder="在这里定义其人格、能力边界及交互规则..."
                     />
                   </div>
+
+                  {activeMainTab === 'assistant' && (
+                    <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100 flex items-start gap-3">
+                      <ShieldAlert className="text-amber-500 mt-0.5" size={18} />
+                      <div className="flex-1">
+                        <p className="text-[11px] font-black text-amber-800 uppercase tracking-tight">私有化部署模式</p>
+                        <p className="text-[10px] text-amber-700/70 font-medium leading-relaxed mt-1">
+                          新建助手默认仅您个人可见。您可以后续选择将其贡献到“推荐助手”社区，经过审核后供传书所有用户订阅使用。
+                        </p>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Skills Section for Agents */}
                   {activeMainTab === 'agent' && (
@@ -370,11 +386,18 @@ export default function IntelligenceHub() {
 // --- Sub Views ---
 
 function AssistantView({ activeSubTab, setActiveSubTab }: { activeSubTab: string, setActiveSubTab: (t: string) => void }) {
+  const filteredBots = MOCK_BOTS.filter(bot => {
+    if (activeSubTab === '全部') {
+      return bot.category === '我的助手' || bot.isSubscribed;
+    }
+    return bot.category === activeSubTab;
+  });
+
   return (
     <div className="flex-1 overflow-hidden flex flex-col">
       <div className="bg-white px-4 border-b border-border-base flex-shrink-0 overflow-x-auto no-scrollbar">
         <div className="max-w-6xl mx-auto flex gap-8">
-          {['全部', '我的助手', '推荐', '预设角色'].map(tab => (
+          {['全部', '我的助手', '推荐助手'].map(tab => (
             <button 
               key={tab}
               onClick={() => setActiveSubTab(tab)}
@@ -390,7 +413,7 @@ function AssistantView({ activeSubTab, setActiveSubTab }: { activeSubTab: string
       <div className="flex-1 overflow-y-auto p-4 md:p-8">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {MOCK_BOTS.filter(b => activeSubTab === '全部' || b.category === activeSubTab).map(bot => (
+            {filteredBots.map(bot => (
               <motion.div 
                 key={bot.id}
                 whileHover={{ y: -4 }}
@@ -418,6 +441,12 @@ function AssistantView({ activeSubTab, setActiveSubTab }: { activeSubTab: string
                     <Cpu size={12} />
                     {bot.model}
                   </div>
+                  {bot.isPrivate && (
+                    <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 border border-amber-200 rounded-full text-[9px] font-black uppercase tracking-widest">
+                      <ShieldAlert size={12} />
+                      私有化
+                    </div>
+                  )}
                   {bot.knowledgeBases > 0 && (
                     <div className="flex items-center gap-1.5 px-3 py-1 bg-surface text-text-muted border border-border-base rounded-full text-[9px] font-black uppercase tracking-widest">
                       <Database size={12} />
@@ -426,9 +455,24 @@ function AssistantView({ activeSubTab, setActiveSubTab }: { activeSubTab: string
                   )}
                 </div>
 
-                <button className="mt-2 w-full py-3 bg-surface text-primary font-black rounded-2xl text-[10px] hover:bg-primary hover:text-white transition-all uppercase tracking-[0.2em] border border-border-base group-hover:border-primary">
-                  即刻对话
-                </button>
+                <div className="flex gap-2">
+                  <button className="flex-1 py-3 bg-surface text-primary font-black rounded-2xl text-[10px] hover:bg-primary hover:text-white transition-all uppercase tracking-[0.2em] border border-border-base group-hover:border-primary">
+                    即刻对话
+                  </button>
+                  {bot.isPrivate && (
+                    <button 
+                      className={`
+                        px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.1em] transition-all border
+                        ${bot.isContributed 
+                          ? 'bg-green-50 text-green-600 border-green-200 cursor-default' 
+                          : 'bg-white text-text-muted border-border-base hover:border-primary hover:text-primary active:scale-95'}
+                      `}
+                      title={bot.isContributed ? "已贡献到社区" : "贡献到推荐助手社区"}
+                    >
+                      {bot.isContributed ? <CheckCircle2 size={16} /> : <Globe2 size={16} />}
+                    </button>
+                  )}
+                </div>
               </motion.div>
             ))}
           </div>
