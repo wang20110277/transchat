@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 
 // Types
-type ChatType = 'person' | 'ai' | 'agent' | 'group';
+type ChatType = 'person' | 'ai' | 'agent' | 'group' | 'digital-human';
 
 interface Chat {
   id: string;
@@ -48,11 +48,12 @@ const MOCK_CHATS: Chat[] = [
   { id: '3', name: '设计灵感群', avatar: 'https://picsum.photos/seed/g1/100', type: 'group', lastMessage: '王五: 这个配色方案不错', time: '10:45', unread: 15, online: false },
   { id: '4', name: '文件管理 Agent', avatar: 'https://picsum.photos/seed/ag1/100', type: 'agent', lastMessage: '任务完成：已将 12 个文件归类到“设计”文件夹', time: '昨天', unread: 0, online: true },
   { id: '5', name: '李漂亮', avatar: 'https://picsum.photos/seed/p2/100', type: 'person', lastMessage: '[语音 5"]', time: '昨天', unread: 0, online: false },
+  { id: '6', name: '虚拟主播-艾米', avatar: 'https://picsum.photos/seed/dh1/100', type: 'digital-human', lastMessage: '正在直播中，快来看看吧！', time: '18:30', unread: 1, online: true },
 ];
 
 export default function ChatPage() {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(MOCK_CHATS[1].id);
-  const [activeTab, setActiveTab] = useState<'全部' | '真人' | 'AI助手' | '智能体' | '群组'>('全部');
+  const [activeTab, setActiveTab] = useState<'全部' | '真人' | 'AI助手' | '智能体' | '数字人' | '群组'>('全部');
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileView, setIsMobileView] = useState(false);
   const [showMobileList, setShowMobileList] = useState(true);
@@ -68,6 +69,7 @@ export default function ChatPage() {
       (activeTab === '真人' && chat.type === 'person') ||
       (activeTab === 'AI助手' && chat.type === 'ai') ||
       (activeTab === '智能体' && chat.type === 'agent') ||
+      (activeTab === '数字人' && chat.type === 'digital-human') ||
       (activeTab === '群组' && chat.type === 'group');
     
     // Search filter
@@ -164,6 +166,10 @@ export default function ChatPage() {
                     <PlusMenuItem icon={Users} label="创建群聊" onClick={() => setShowPlusMenu(false)} />
                     <PlusMenuItem icon={UserPlus} label="添加好友" onClick={() => setShowPlusMenu(false)} />
                     <div className="h-px bg-border-base my-1 mx-2" />
+                    <PlusMenuItem icon={Bot} label="选择 AI 助手" onClick={() => setShowPlusMenu(false)} />
+                    <PlusMenuItem icon={Zap} label="选择 AI 智能体" onClick={() => setShowPlusMenu(false)} />
+                    <PlusMenuItem icon={Video} label="选择 AI 数字人" onClick={() => setShowPlusMenu(false)} />
+                    <div className="h-px bg-border-base my-1 mx-2" />
                     <PlusMenuItem icon={Search} label="搜索联系人" onClick={() => setShowPlusMenu(false)} />
                   </motion.div>
                 </>
@@ -182,7 +188,7 @@ export default function ChatPage() {
             </div>
 
             <div className="flex gap-2 overflow-x-auto no-scrollbar scroll-smooth">
-              {['全部', '真人', 'AI助手', '智能体', '群组'].map((t) => (
+              {['全部', '真人', 'AI助手', '智能体', '数字人', '群组'].map((t) => (
                 <button 
                   key={t}
                   onClick={() => setActiveTab(t as any)}
@@ -206,7 +212,7 @@ export default function ChatPage() {
                 `}
               >
                 <div className="relative flex-shrink-0">
-                  <div className={`w-12 h-12 rounded-full overflow-hidden ${chat.type === 'ai' || chat.type === 'agent' ? 'ring-2 ring-purple-400 p-0.5' : ''}`}>
+                  <div className={`w-12 h-12 rounded-full overflow-hidden ${chat.type === 'ai' || chat.type === 'agent' || chat.type === 'digital-human' ? 'ring-2 ring-purple-400 p-0.5' : ''}`}>
                     <img src={chat.avatar} alt={chat.name} className="w-full h-full rounded-full object-cover" />
                   </div>
                   {chat.online && (
@@ -220,6 +226,11 @@ export default function ChatPage() {
                   {chat.type === 'agent' && (
                     <div className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center border-2 border-white">
                       <Zap className="text-white w-3 h-3" />
+                    </div>
+                  )}
+                  {chat.type === 'digital-human' && (
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center border-2 border-white">
+                      <Video className="text-white w-3 h-3" />
                     </div>
                   )}
                 </div>

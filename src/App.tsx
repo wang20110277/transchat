@@ -20,6 +20,7 @@ import DiscoveryPage from './pages/DiscoveryPage';
 import IntelligenceHub from './pages/IntelligenceHub';
 import ContactsPage from './pages/ContactsPage';
 import SettingsPage from './pages/SettingsPage';
+import DigitalHumanPage from './pages/DigitalHumanPage';
 
 type ViewMode = 'chat' | 'contacts' | 'discovery' | 'ai' | 'agent' | 'profile' | 'settings';
 

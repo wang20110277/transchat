@@ -14,6 +14,7 @@ import {
   Settings,
   Zap,
   Play,
+  Video,
   Terminal,
   FileCode,
   FileText,
@@ -34,6 +35,8 @@ import {
   Image as ImageIcon,
   Plug
 } from 'lucide-react';
+
+import DigitalHumanPage from './DigitalHumanPage';
 
 // --- Types ---
 interface Skill {
@@ -91,7 +94,7 @@ const MOCK_AGENTS: Agent[] = [
 ];
 
 export default function IntelligenceHub() {
-  const [activeMainTab, setActiveMainTab] = useState<'assistant' | 'agent'>('assistant');
+  const [activeMainTab, setActiveMainTab] = useState<'assistant' | 'agent' | 'digital-human'>('assistant');
   const [activeSubTab, setActiveSubTab] = useState('全部');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState<string | null>(MOCK_AGENTS[0].id);
@@ -141,6 +144,13 @@ export default function IntelligenceHub() {
                 <Zap size={14} />
                 智能体
               </button>
+              <button 
+                onClick={() => setActiveMainTab('digital-human')}
+                className={`px-4 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-2 ${activeMainTab === 'digital-human' ? 'bg-white shadow-sm text-primary' : 'text-text-muted hover:text-text-main'}`}
+              >
+                <Video size={14} />
+                数字人
+              </button>
             </div>
           </div>
 
@@ -159,6 +169,12 @@ export default function IntelligenceHub() {
               >
                 <Zap size={20} />
               </button>
+              <button 
+                onClick={() => setActiveMainTab('digital-human')}
+                className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all ${activeMainTab === 'digital-human' ? 'bg-white shadow-sm text-primary' : 'text-text-muted'}`}
+              >
+                <Video size={20} />
+              </button>
             </div>
             
             <button 
@@ -166,7 +182,7 @@ export default function IntelligenceHub() {
               className="w-10 h-10 md:w-auto md:px-5 md:py-2 ai-gradient-bg text-white font-black rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-all text-xs uppercase tracking-tight shadow-lg shadow-primary/20"
             >
               <Plus size={14} strokeWidth={3} />
-              <span className="hidden md:block">新建{activeMainTab === 'assistant' ? '助手' : '智能体'}</span>
+              <span className="hidden md:block">新建{activeMainTab === 'assistant' ? '助手' : activeMainTab === 'agent' ? '智能体' : '数字人'}</span>
             </button>
           </div>
         </div>
@@ -174,8 +190,10 @@ export default function IntelligenceHub() {
 
       {activeMainTab === 'assistant' ? (
         <AssistantView activeSubTab={activeSubTab} setActiveSubTab={setActiveSubTab} />
-      ) : (
+      ) : activeMainTab === 'agent' ? (
         <AgentView selectedAgentId={selectedAgentId} setSelectedAgentId={setSelectedAgentId} />
+      ) : (
+        <DigitalHumanPage />
       )}
 
       {/* Shared Create Modal Mock */}
@@ -197,41 +215,103 @@ export default function IntelligenceHub() {
             >
               <div className="p-8">
                 <h2 className="text-2xl font-black text-text-main mb-6 tracking-tight flex items-center gap-2">
-                  <Plus className="text-primary" />
-                  新建{activeMainTab === 'assistant' ? ' AI 助手' : ' 自动化智能体'}
+                  <div className="p-2 bg-primary/10 rounded-xl text-primary">
+                    {activeMainTab === 'assistant' ? <Bot size={24} /> : activeMainTab === 'agent' ? <Zap size={24} /> : <Video size={24} />}
+                  </div>
+                  新建{activeMainTab === 'assistant' ? ' AI 助手' : activeMainTab === 'agent' ? ' 自动化智能体' : ' 灵动数字人'}
                 </h2>
                 <div className="space-y-6">
-                   <div className="flex gap-6 items-center">
-                    <div className="w-20 h-20 bg-surface rounded-2xl border-2 border-dashed border-border-base flex items-center justify-center text-text-muted cursor-pointer hover:bg-white hover:border-primary transition-all group">
-                      <Camera size={24} className="group-hover:text-primary transition-colors" />
-                    </div>
-                    <div className="flex-1 space-y-2 text-left">
-                      <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">设定名称 / Identity</label>
-                      <input className="w-full bg-surface border border-border-base rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-medium text-sm" placeholder="例如：法律专家、数据分析助手..." />
-                    </div>
-                  </div>
+                  {activeMainTab === 'digital-human' ? (
+                    <div className="space-y-6">
+                      <div className="flex gap-6 items-center">
+                        <div className="w-32 h-32 bg-surface rounded-3xl border-2 border-dashed border-border-base flex flex-col items-center justify-center text-text-muted cursor-pointer hover:bg-white hover:border-primary transition-all group overflow-hidden relative">
+                          <div className="z-10 flex flex-col items-center">
+                            <Camera size={32} className="group-hover:text-primary transition-colors mb-2" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-center">上传形象<br/>或视频</span>
+                          </div>
+                          <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                        <div className="flex-1 space-y-4 text-left">
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">数字人名称 / Digital Name</label>
+                            <input className="w-full bg-surface border border-border-base rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-medium text-sm" placeholder="为您的数字人命名..." />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">声音克隆 / Voice ID</label>
+                            <select className="w-full bg-surface border border-border-base rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-bold text-xs appearance-none">
+                              <option>默认温柔女声 (Amy-V1)</option>
+                              <option>稳重专业男声 (James-P2)</option>
+                              <option>活泼动感少女 (Ria-X3)</option>
+                              <option>自定义克隆声音...</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
 
-                  <div className="space-y-2 text-left">
-                    <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">底层架构 / Model</label>
-                    <div className="grid grid-cols-2 gap-3">
-                      <button className="p-3 border-2 border-primary bg-primary/5 rounded-xl text-xs font-black flex items-center gap-2 text-primary">
-                        <Cpu size={14} />
-                        Gemini 1.5 Pro
-                      </button>
-                      <button className="p-3 border-2 border-border-base rounded-xl text-xs font-black flex items-center gap-2 text-text-muted hover:border-primary hover:text-text-main transition-colors">
-                        <Cpu size={14} />
-                        GPT-4o
-                      </button>
-                    </div>
-                  </div>
+                      <div className="space-y-2 text-left">
+                        <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">人格背景 / Persona Background</label>
+                        <textarea 
+                          className="w-full bg-surface border border-border-base rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-medium text-xs h-24 resize-none" 
+                          placeholder="描述数字人的性格、身份背景及语言风格..."
+                        />
+                      </div>
 
-                  <div className="space-y-2 text-left">
-                    <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">核心逻辑 / Prompting</label>
-                    <textarea 
-                      className="w-full bg-surface border border-border-base rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-medium text-xs h-32 resize-none" 
-                      placeholder="在这里定义其人格、能力边界及交互规则..."
-                    />
-                  </div>
+                      <div className="space-y-2 text-left">
+                        <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">交互场景 / Interaction Mode</label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {['实时直播', '业务导购', '虚拟陪伴'].map(mode => (
+                            <button key={mode} className="py-2.5 border-2 border-border-base rounded-xl text-[10px] font-black text-text-muted hover:border-primary hover:text-primary hover:bg-primary/5 transition-all uppercase">
+                              {mode}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-start gap-3">
+                        <Wand2 className="text-blue-500 mt-0.5" size={18} />
+                        <div className="flex-1">
+                          <p className="text-[11px] font-black text-blue-800 uppercase tracking-tight">AI 自动生成驱动</p>
+                          <p className="text-[10px] text-blue-700/70 font-medium leading-relaxed mt-1">
+                            数字人将使用业界领先的云端实时渲染技术。您可以上传 30 秒真人视频，系统将自动学习面部肌肉律动与身体姿态。
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex gap-6 items-center">
+                        <div className="w-20 h-20 bg-surface rounded-2xl border-2 border-dashed border-border-base flex items-center justify-center text-text-muted cursor-pointer hover:bg-white hover:border-primary transition-all group">
+                          <Camera size={24} className="group-hover:text-primary transition-colors" />
+                        </div>
+                        <div className="flex-1 space-y-2 text-left">
+                          <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">设定名称 / Identity</label>
+                          <input className="w-full bg-surface border border-border-base rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-medium text-sm" placeholder="例如：法律专家、数据分析助手..." />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 text-left">
+                        <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">底层架构 / Model</label>
+                        <div className="grid grid-cols-2 gap-3">
+                          <button className="p-3 border-2 border-primary bg-primary/5 rounded-xl text-xs font-black flex items-center gap-2 text-primary">
+                            <Cpu size={14} />
+                            Gemini 1.5 Pro
+                          </button>
+                          <button className="p-3 border-2 border-border-base rounded-xl text-xs font-black flex items-center gap-2 text-text-muted hover:border-primary hover:text-text-main transition-colors">
+                            <Cpu size={14} />
+                            GPT-4o
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 text-left">
+                        <label className="text-[10px] font-black text-text-muted uppercase tracking-widest">核心逻辑 / Prompting</label>
+                        <textarea 
+                          className="w-full bg-surface border border-border-base rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary font-medium text-xs h-32 resize-none" 
+                          placeholder="在这里 define 其人格、能力边界及交互规则..."
+                        />
+                      </div>
+                    </>
+                  )}
 
                   {activeMainTab === 'assistant' && (
                     <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100 flex items-start gap-3">

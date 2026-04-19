@@ -1,6 +1,6 @@
 {
-  "name": "传书",
-  "description": "Next-generation IM with AI Agents, Knowledge Bases, and Smart Glasses integration.",
+  "name": "TransChat",
+  "description": "Next-generation IM with AI Agents, Digital Humans, and Knowledge Bases.",
   "requestFramePermissions": [
     "camera",
     "microphone"
